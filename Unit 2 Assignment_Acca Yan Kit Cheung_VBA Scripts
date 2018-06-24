@@ -1,0 +1,75 @@
+'Working on the Moderate Version
+
+Sub TotalVolume()
+
+        'Loop through all worksheets using ActiveWorkbook loop
+        Dim ws As Worksheet
+        For Each ws In ActiveWorkbook.Worksheets
+        ws.Activate
+    
+        'Define last row of data
+        LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+        
+        'Create Variables to hold Values
+        Dim Ticker As String
+        Dim TotalStockVolume As Double
+        Dim OpeningPrice As Double
+        Dim ClosingPrice As Double
+        Dim YearlyChange As Double
+        Dim PercentChange As Double
+        
+        'Defining row and column
+        Dim Row As Integer
+        Row = 2
+        Dim Column As Integer
+        Column = 1
+        Dim i As Long
+        
+        'Set Total Stock Volume = 0 to start
+        TotalStockVolume = 0
+        
+        'Find Opening Price
+        OpeningPrice = Cells(2, Column + 2).Value
+        
+        
+        For i = 2 To LastRow
+         'Check for change in Ticker column
+                If Cells(i + 1, Column).Value <> Cells(i, Column).Value Then
+                'Set Ticker name in new column
+                Ticker = Cells(i, Column).Value
+                Cells(Row, Column + 8).Value = Ticker
+                'Find Closing Price
+                ClosingPrice = Cells(i, Column + 5).Value
+                'Calculate Yearly Change
+                YearlyChange = ClosingPrice - OpeningPrice
+                Cells(Row, Column + 9).Value = YearlyChange
+                'Calculate Percent Change from above
+                If (OpeningPrice = 0 And ClosingPrice = 0) Then
+                    PercentChange = 0
+                ElseIf (OpeningPrice = 0 And ClosingPrice <> 0) Then
+                    PercentChange = 1
+                Else
+                    PercentChange = YearlyChange / OpeningPrice
+                    Cells(Row, Column + 10).Value = PercentChange
+                    
+                End If
+                'Sum Total Stock Volume
+                TotalStockVolume = TotalStockVolume + Cells(i, Column + 6).Value
+                Cells(Row, Column + 11).Value = TotalStockVolume
+                'Move to next row
+                Row = Row + 1
+                'Reset Opening Price
+                OpeningPrice = Cells(i + 1, Column + 2)
+                'Reset Total Stock Volume
+                TotalStockVolume = 0
+            
+            Else
+                TotalStockVolume = TotalStockVolume + Cells(i, Column + 6).Value
+            End If
+                                
+        Next i
+   
+    Next ws
+        
+End Sub
+
